@@ -1,0 +1,4 @@
+LIBRARY iidxio-lua-bind
+
+EXPORTS
+    luaopen_iidxio_lua_bind
