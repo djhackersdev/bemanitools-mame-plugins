@@ -121,3 +121,14 @@ This setup is as close to the hardware as possible if it comes to emulation accu
 of bemanitools' iidxio implementations backed by real hardware, e.g. ezusb, ezusb2 or BIO2, there
 should not be concerns regarding negative performance or input latency. Naturally, that does not
 account for running on weak hardware or when using bad/buggy/non-optimized iidxio implementations.
+
+## Bonus: iidx-exit-hook plugin
+
+A small plugin to exit MAME using the pre-configured button combination, e.g. *Start P1* +
+*Start P2* + *VEFX* + *Effect*. This can be useful for dedicated setups to allow game switching by
+running a game selector/loader once the current game exits.
+
+Just copy the entire plugin folder `iidx-exit-hook` to the `mame/plugins` folder of your local installation. This plugin does not have any Bemanitools dependencies and works without it or
+the `iidxio` plugin.
+
+The `iidx-exit-hook` plugin also works in combination with the `iidxio` plugin.
