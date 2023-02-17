@@ -201,7 +201,10 @@ function iidxio.startplugin()
     end
 
     local function init()
-        is_initialized = false
+        -- Protect to init once because register_start is also called on machine reset
+        if is_initialized then
+            return
+        end
 
         -- Heuristic to ensure this plugin only runs with bmiidx games
         -- This also blocks the plugin from running when mame is started in "UI mode"

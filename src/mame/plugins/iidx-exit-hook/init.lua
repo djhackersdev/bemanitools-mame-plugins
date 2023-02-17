@@ -16,6 +16,7 @@ function iidxio.startplugin()
     local PANEL_VEFX_MASK = (1 << 2)
     local PANEL_EFFECT_MASK = (1 << 3)
 
+    local is_initialized = false
     local cur_io_offset = 0
 
     local function is_bit_set(data, mask)
@@ -62,6 +63,11 @@ function iidxio.startplugin()
     end
 
     local function init()
+        -- Protect to init once because register_start is also called on machine reset
+        if is_initialized then
+            return
+        end
+
         -- Heuristic to ensure this plugin only runs with bmiidx games
         -- This also blocks the plugin from running when mame is started in "UI mode"
         if not string.find(manager.machine.system.name, "bmiidx") then
@@ -75,6 +81,12 @@ function iidxio.startplugin()
         -- https://github.com/mamedev/mame/blob/9dbf099b651c8c48140db01059614e23d5bbdcb9/src/mame/konami/twinkle.cpp
         callback_twinkle_io_write = memory:install_write_tap(0x1f220000, 0x1f220003, "twinkle_io_write", twinkle_io_write)
         callback_twinkle_io_read = memory:install_read_tap(0x1f220004, 0x1f220007, "twinkle_io_read", twinkle_io_read)
+
+        is_initialized = true
+    end
+
+    local function deinit()
+        is_initialized = false
     end
 
     ---------------------------------------------------------------------------
@@ -82,6 +94,7 @@ function iidxio.startplugin()
     ---------------------------------------------------------------------------
 
     emu.register_start(init)
+    emu.register_stop(deinit)
 end
 
 return exports
