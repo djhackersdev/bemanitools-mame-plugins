@@ -1,5 +1,7 @@
 # iidxio MAME plugin
 
+Version: `0.03`
+
 A MAME Lua plugin to hook up all game IO by the
 [twinkle system](https://github.com/mamedev/mame/blob/master/src/mame/konami/twinkle.cpp) to
 [Bemanitools'](https://github.com/djhackersdev/bemanitools)

@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.03
+
 ## 0.02
 
 * Improve (technical) documentation
