@@ -2,9 +2,9 @@
 
 ## 0.03
 
-* Bugfix: Enforce loading order by changing `iidx-exit-hook` plugin name to `iidxio-exit-hook`.
-  When using `iidxio` and `iidxio-exit-hook` in combination, `iidxio` **must load before**
-  `iidxio-exit-hook` for the latter to work.
+* Bugfix: Merge `iidxio-exit-hook` plugin with `iidxio` plugin because of plugin crashing after
+  about 2-3 minutes running the game. Running two plugins writing/reading the same memory regions
+  seems to be buggy for now.
 * Bugfix: MAME (soft) machine reset re-triggering init function in Lua plugin scripts of `iidxio`
   and `iidxio-exit-hook`. Detect and block re-init
 
