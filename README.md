@@ -132,3 +132,132 @@ Just copy the entire plugin folder `iidx-exit-hook` to the `mame/plugins` folder
 the `iidxio` plugin.
 
 The `iidx-exit-hook` plugin also works in combination with the `iidxio` plugin.
+
+## Bonus: Memory/IO read/write call patterns
+
+Useful for testing and debugging to understand how the Lua plugin is actually being driven by the
+game itself. This can help debugging bugs or performance issues not just with the plugin but also
+with any `iidxio` implementations used by the plugin.
+
+To get the outputs below, simply add prints at the relevant positions in the
+[`iidxio` Lua plugin](src/mame/plugins/iidxio/init.lua) and run the game. Here, the game used to
+capture the output was `bmiidx8`.
+
+Format:
+
+* `twinkle_keys_read (0x1f240000 0xFFFF)`: `<function name in script> (<memory address>, <mask>)`
+* `twinkle_io_read (0x1f220004 0xff 0x07)`: `<function name in script> (<memory address>, <mask>, <current io offset>)`
+
+### Main menu
+
+Scoped excerpt:
+
+```text
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x1f): sliders 1 + 2 input
+twinkle_io_write (0x1F220000 0xff 4f): 16seg single char output
+twinkle_io_write (0x1F220000 0xff 57): 16seg single char output
+frame_update
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x27): sliders 3 + 4 input
+twinkle_io_write (0x1F220000 0xff 5f): 16seg single char output
+twinkle_io_write (0x1F220000 0xff 67): 16seg single char output
+frame_update
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x2f): sliders 5 input
+twinkle_io_write (0x1F220000 0xff 6f): 16seg single char output
+twinkle_io_write (0x1F220000 0xff 77): 16seg single char output
+frame_update
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x1f): sliders 1 + 2 input
+twinkle_io_write (0x1F220000 0xff 7f): 16seg single char output
+twinkle_io_write (0x1F220000 0xff 0x8f): neons output
+frame_update
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x27): sliders 3 + 4 input
+frame_update
+```
+
+#### Observations
+
+* 14key inputs polled twice per frame
+* Button panel inputs and both turntables polled once per frame
+* Slider groups are alternating every three frames
+* 14key outputs written once per frame
+* Outputs only written when actually changed
+
+### Test menu
+
+Different patterns depending on the sub-menu you are in. In I/O test menus,
+the items to test on the sub-menu are naturally being queried per frame.
+
+### Gameplay
+
+Scoped excerpt:
+
+```text
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x1f): sliders 1 + 2 input
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+frame_update
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x27): sliders 3 + 4 input
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+frame_update
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_io_read (0x1f220004 0xff 0x07): button panel inputs
+twinkle_io_read (0x1f220004 0xff 0x17): tt 2 input
+twinkle_io_read (0x1f220004 0xff 0x0f): tt 1 input
+twinkle_io_read (0x1f220004 0xff 0x2f): sliders 5 input
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+twinkle_keys_write (0x1f250000 0xFF): 14 key outputs
+twinkle_keys_read (0x1f240000 0xFFFF): 14 key inputs
+frame_update
+```
+
+#### Observations
+
+* Very similar to main menu
+* Two additional 14 key input polls per frame, total of 4 per frame
+* One additional 14 key output write per frame, total of 2 per frame
