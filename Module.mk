@@ -25,13 +25,13 @@ $(BUILDDIR)/mame/lua53.dll: \
 		dist/lua53.dll
 	$(V)cp dist/lua53.dll $(BUILDDIR)/mame/lua53.dll
 
-$(BUILDDIR)/mame/plugins/iidx-exit-hook/init.lua:
+$(BUILDDIR)/mame/plugins/iidxio-exit-hook/init.lua:
 	$(V)mkdir -p $(shell dirname $@)
-	$(V)cp src/mame/plugins/iidx-exit-hook/init.lua $@
+	$(V)cp src/mame/plugins/iidxio-exit-hook/init.lua $@
 
-$(BUILDDIR)/mame/plugins/iidx-exit-hook/plugin.json:
+$(BUILDDIR)/mame/plugins/iidxio-exit-hook/plugin.json:
 	$(V)mkdir -p $(shell dirname $@)
-	$(V)cp src/mame/plugins/iidx-exit-hook/plugin.json $@
+	$(V)cp src/mame/plugins/iidxio-exit-hook/plugin.json $@
 
 $(BUILDDIR)/mame/plugins/iidxio/init.lua:
 	$(V)mkdir -p $(shell dirname $@)
@@ -46,8 +46,8 @@ $(BUILDDIR)/iidxio-mame-plugin.zip: \
 		$(BUILDDIR)/mame/iidxio_lua_bind.dll \
 		$(BUILDDIR)/mame/plugins/iidxio/init.lua \
 		$(BUILDDIR)/mame/plugins/iidxio/plugin.json \
-		$(BUILDDIR)/mame/plugins/iidx-exit-hook/init.lua \
-		$(BUILDDIR)/mame/plugins/iidx-exit-hook/plugin.json
+		$(BUILDDIR)/mame/plugins/iidxio-exit-hook/init.lua \
+		$(BUILDDIR)/mame/plugins/iidxio-exit-hook/plugin.json
 	$(V)echo ... $@
 	$(V)cd $(BUILDDIR)/mame && zip -r ../../$@ *
 

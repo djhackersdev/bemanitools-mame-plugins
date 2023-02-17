@@ -124,23 +124,30 @@ of bemanitools' iidxio implementations backed by real hardware, e.g. ezusb, ezus
 should not be concerns regarding negative performance or input latency. Naturally, that does not
 account for running on weak hardware or when using bad/buggy/non-optimized iidxio implementations.
 
-## Bonus: iidx-exit-hook plugin
+## Bonus: iidxio-exit-hook plugin
 
 A small plugin to exit MAME using the pre-configured button combination, e.g. *Start P1* +
 *Start P2* + *VEFX* + *Effect*. This can be useful for dedicated setups to allow game switching by
 running a game selector/loader once the current game exits.
 
-Just copy the entire plugin folder `iidx-exit-hook` to the `mame/plugins` folder of your local installation. This plugin does not have any Bemanitools dependencies and works without it or
+Just copy the entire plugin folder `iidxio-exit-hook` to the `mame/plugins` folder of your local installation. This plugin does not have any Bemanitools dependencies and works without it or
 the `iidxio` plugin.
 
-The `iidx-exit-hook` plugin also works in combination with the `iidxio` plugin.
+The `iidxio-exit-hook` plugin also works in combination with the `iidxio` plugin.
+
+However, plugin loading order matters here. The `iidxio` plugin must be loaded and started
+**before** the `iidxio-exit-hook` plugin. The current version of the `mame/plugins/boot.lua` script
+which is run by MAME to boot the plugin systen, loads plugins based on the order provided by the
+folder listing of `mame/plugins`. This currently defaults to lex-sort ascending. This problem is
+avoided by the naming of the plugins right now with `iidxio` ranked before `iidxio-exit-hook`.
+Otherwise, the `iidxio-exit-hook` plugin won't work in combination with `iidxio`.
 
 ## Bonus: Memory/IO read/write call patterns
 
 Useful for testing and debugging to understand how the Lua plugin is actually being driven by the
 game itself. This can help debugging bugs or performance issues not just with the plugin but also
 with any `iidxio` implementations used by the plugin.
-
+*
 To get the outputs below, simply add prints at the relevant positions in the
 [`iidxio` Lua plugin](src/mame/plugins/iidxio/init.lua) and run the game. Here, the game used to
 capture the output was `bmiidx8`.
