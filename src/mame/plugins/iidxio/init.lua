@@ -2,7 +2,7 @@
 -- https://github.com/mamedev/mame/blob/9dbf099b651c8c48140db01059614e23d5bbdcb9/plugins/autofire/init.lua
 local exports = {
 	name = 'iidxio',
-	version = '0.0.1',
+	version = '0.0.2',
 	description = 'Plugin to integrate the Bemanitools 5 iidxio API for IO handling into the twinkle system',
 	license = 'Unlicensed',
 	author = { name = 'icex2' }

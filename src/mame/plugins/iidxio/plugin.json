@@ -2,7 +2,7 @@
 	"plugin": {
 		"name": "iidxio",
 		"description": "Plugin to integrate the Bemanitools 5 iidxio API for IO handling into the twinkle system",
-		"version": "0.0.1",
+		"version": "0.0.2",
 		"author": "icex2",
 		"type": "plugin",
 		"start": "true"

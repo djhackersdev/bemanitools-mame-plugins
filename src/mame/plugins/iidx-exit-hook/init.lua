@@ -2,7 +2,7 @@
 -- https://github.com/mamedev/mame/blob/9dbf099b651c8c48140db01059614e23d5bbdcb9/plugins/autofire/init.lua
 local exports = {
 	name = 'iidx-exit-hook',
-	version = '0.0.1',
+	version = '0.0.2',
 	description = 'Plugin to enable exiting MAME by pressing the P1 Start + P2 Start + VEFX + Effect buttons for the twinkle system',
 	license = 'Unlicensed',
 	author = { name = 'icex2' }
