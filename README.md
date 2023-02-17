@@ -103,3 +103,21 @@ The following files co-located in the same directory as `iidxio_lua_bind.dll`:
 
 Source these files from your bemanitools binary distribution accordingly. Ensure to pick the 64-bit
 versions.
+
+## High level technical information
+
+The following items provide key high level technical information about the implementation.
+
+[`iidxio-lua-bind`](src/main/iidxio-lua-bind/iidxio-lua-bind.c) is a C-library that expose [Bemanitools' iidx API](https://github.com/djhackersdev/bemanitools/blob/master/doc/api.md) to Lua.
+
+The `iidxio` MAME Lua plugin uses
+[MAME's Lua API](https://docs.mamedev.org/techspecs/luareference.html). It hooks callbacks into the
+start and stop of the emulation's life cycle as well as at the end of each frame. Additional 
+callbacks are set-up to "tap into memory" reads and writes on the twinkle system's memory map. These
+memory taps dispatch based on the issued memory reads and writes commands as different IO
+interactions plus a separate 14 key read/write data handler.
+
+This setup is as close to the hardware as possible if it comes to emulation accuracy. When using any
+of bemanitools' iidxio implementations backed by real hardware, e.g. ezusb, ezusb2 or BIO2, there
+should not be concerns regarding negative performance or input latency. Naturally, that does not
+account for running on weak hardware or when using bad/buggy/non-optimized iidxio implementations.
