@@ -3,7 +3,7 @@
 local exports = {
 	name = 'iidxio',
 	version = '0.0.1',
-	description = 'Plugin to integrate the Bemanitools 5 iidxio API for IO handling',
+	description = 'Plugin to integrate the Bemanitools 5 iidxio API for IO handling into the twinkle system',
 	license = 'Unlicensed',
 	author = { name = 'icex2' }
 }
