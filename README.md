@@ -23,6 +23,8 @@ Beatmania IIDX game supported by MAME.
 * The `iidxio` Lua plugin does not merge analog inputs. Any configured analog inputs, e.g.
   turntables, from MAME's input manager will not work. Digital inputs, e.g. 14 key buttons, however
   are merged and should work.
+* Built-in "game exit button combination": When enabled (not enabled by default), use 
+  *Start P1* + *Start P2* + *VEFX* + *Effect* to exit the game.
 
 ## Building
 
@@ -123,24 +125,6 @@ This setup is as close to the hardware as possible if it comes to emulation accu
 of bemanitools' iidxio implementations backed by real hardware, e.g. ezusb, ezusb2 or BIO2, there
 should not be concerns regarding negative performance or input latency. Naturally, that does not
 account for running on weak hardware or when using bad/buggy/non-optimized iidxio implementations.
-
-## Bonus: iidxio-exit-hook plugin
-
-A small plugin to exit MAME using the pre-configured button combination, e.g. *Start P1* +
-*Start P2* + *VEFX* + *Effect*. This can be useful for dedicated setups to allow game switching by
-running a game selector/loader once the current game exits.
-
-Just copy the entire plugin folder `iidxio-exit-hook` to the `mame/plugins` folder of your local installation. This plugin does not have any Bemanitools dependencies and works without it or
-the `iidxio` plugin.
-
-The `iidxio-exit-hook` plugin also works in combination with the `iidxio` plugin.
-
-However, plugin loading order matters here. The `iidxio` plugin must be loaded and started
-**before** the `iidxio-exit-hook` plugin. The current version of the `mame/plugins/boot.lua` script
-which is run by MAME to boot the plugin systen, loads plugins based on the order provided by the
-folder listing of `mame/plugins`. This currently defaults to lex-sort ascending. This problem is
-avoided by the naming of the plugins right now with `iidxio` ranked before `iidxio-exit-hook`.
-Otherwise, the `iidxio-exit-hook` plugin won't work in combination with `iidxio`.
 
 ## Bonus: Memory/IO read/write call patterns
 

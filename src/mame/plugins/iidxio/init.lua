@@ -2,25 +2,53 @@
 -- https://github.com/mamedev/mame/blob/9dbf099b651c8c48140db01059614e23d5bbdcb9/plugins/autofire/init.lua
 local exports = {
 	name = 'iidxio',
-	version = '0.0.2',
+	version = '0.0.3',
 	description = 'Plugin to integrate the Bemanitools 5 iidxio API for IO handling into the twinkle system',
 	license = 'Unlicensed',
 	author = { name = 'icex2' }
 }
 
--- Text only requires 9 characters, have 10 in the buffer to provide a safety trailing null
--- terminator
-local TEXT_16SEG_BLANK = string.char(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-
 local iidxio = exports
 
 function iidxio.startplugin()
+    -- Text only requires 9 characters, have 10 in the buffer to provide a safety trailing null
+    -- terminator
+    local TEXT_16SEG_BLANK = string.char(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    local PANEL_P1_START_MASK = (1 << 0)
+    local PANEL_P2_START_MASK = (1 << 1)
+    local PANEL_VEFX_MASK = (1 << 2)
+    local PANEL_EFFECT_MASK = (1 << 3)
+
+    -- Feature switch: Enable if you to allow players to exit the game by pressing
+    -- Start P1 + Start P2 + VEFX + Effector at the same time
+    local ENABLE_GAME_EXIT_BUTTON_COMBINATION = false
+
+    ----------------------------------------------------------------------------
+
     local is_initialized = false
 
-    local memory = nil
+    local callback_twinkle_io_write = nil
+    local callback_twinkle_io_read = nil
+    local callback_twinkle_keys_read = nil
+    local callback_twinkle_keys_write = nil
 
     local cur_io_offset = 0
     local text_16seg = TEXT_16SEG_BLANK
+
+    ----------------------------------------------------------------------------
+
+    local function is_bit_set(data, mask)
+        return (data & mask) > 0
+    end
+
+    local function is_exit_button_combination_active(data)
+        return 
+            is_bit_set(data, PANEL_P1_START_MASK) and
+            is_bit_set(data, PANEL_P2_START_MASK) and
+            is_bit_set(data, PANEL_VEFX_MASK) and
+            is_bit_set(data, PANEL_EFFECT_MASK)
+    end
 
     local function twinkle_io_write(offset, data, mask)
         if offset == 0x1F220000 and mask == 0xFF then
@@ -95,7 +123,7 @@ function iidxio.startplugin()
             cur_io_offset = data_masked
         end
 
-        return data
+        return
     end
 
     local function twinkle_io_read(offset, data, mask)
@@ -111,6 +139,17 @@ function iidxio.startplugin()
                 local sys = iidxio_ep2_get_sys() & 0x03
         
                 data_masked = data_masked | panel | (sys << 4)
+
+                -- Ultimately, this should live in its own plugin. But, there seem to be issues
+                -- currently when two memory taps are hooked to the same address space which
+                -- results in odd behaviour during runtime. The memory taps work fine until about
+                -- a minute into their lifecycle and then just stop receiving events
+                -- If you don't want this feature enabled, just remove this piece of code
+                if      ENABLE_GAME_EXIT_BUTTON_COMBINATION and 
+                        is_exit_button_combination_active(data_masked) then
+                    print("Exit hook triggered")
+                    manager.machine:exit()
+                end
 
                 return data_masked ~ 0xff
             elseif cur_io_offset == 0x0f then
@@ -139,7 +178,7 @@ function iidxio.startplugin()
             end
         end
 
-        return data
+        return
     end
 
     local function twinkle_keys_read(offset, data, mask)
@@ -156,7 +195,7 @@ function iidxio.startplugin()
             return data_masked ~ 0xFFFF
         end
 
-        return data
+        return
     end
 
     local function twinkle_keys_write(offset, data, mask)
@@ -169,7 +208,7 @@ function iidxio.startplugin()
             iidxio_ep1_set_deck_lights(keys_leds)
         end
 
-        return data
+        return
     end
 
     -- Drive the IO synchronously to the frame update rate of the game
@@ -217,10 +256,45 @@ function iidxio.startplugin()
         -- Tap into relevant IO regions for dispatching data reads and writes to those data areas
         -- Key reference for callback functions registered here:
         -- https://github.com/mamedev/mame/blob/9dbf099b651c8c48140db01059614e23d5bbdcb9/src/mame/konami/twinkle.cpp
-        callback_twinkle_io_write = memory:install_write_tap(0x1f220000, 0x1f220003, "twinkle_io_write", twinkle_io_write)
-        callback_twinkle_io_read = memory:install_read_tap(0x1f220004, 0x1f220007, "twinkle_io_read", twinkle_io_read)
-        callback_twinkle_keys_read = memory:install_read_tap(0x1f240000, 0x1f240003, "twinkle_keys_read", twinkle_keys_read)
-        callback_twinkle_keys_write = memory:install_write_tap(0x1f250000, 0x1f250003, "twinkle_keys_write", twinkle_keys_write)
+        if callback_twinkle_io_write == nil then
+            callback_twinkle_io_write =memory:install_write_tap(
+                0x1f220000,
+                0x1f220003,
+                "twinkle_io_write",
+                twinkle_io_write)
+        else
+            callback_twinkle_io_write:reinstall()
+        end
+
+        if callback_twinkle_io_read == nil then
+            callback_twinkle_io_read = memory:install_read_tap(
+                0x1f220004,
+                0x1f220007,
+                "twinkle_io_read",
+                twinkle_io_read)
+        else
+            callback_twinkle_io_read:reinstall()
+        end
+        
+        if callback_twinkle_keys_read == nil then
+            callback_twinkle_keys_read = memory:install_read_tap(
+                0x1f240000,
+                0x1f240003,
+                "twinkle_keys_read",
+                twinkle_keys_read)
+        else
+            callback_twinkle_keys_read:reinstall()
+        end
+        
+        if callback_twinkle_keys_write == nil then
+            callback_twinkle_keys_write = memory:install_write_tap(
+                0x1f250000,
+                0x1f250003,
+                "twinkle_keys_write",
+                twinkle_keys_write)
+        else
+            callback_twinkle_keys_write:reinstall()
+        end
 
         -- Loads native iidxio lua bindings c-library with iidxio bemanitools API glue code
         require("iidxio_lua_bind")
@@ -240,6 +314,8 @@ function iidxio.startplugin()
         is_initialized = true
 
         frame_update()
+
+        manager.machine:logerror("iidxio plugin initialized")
     end
 
     local function deinit()
@@ -259,6 +335,8 @@ function iidxio.startplugin()
         iidxio_fini()
 
         is_initialized = false
+
+        manager.machine:logerror("iidxio plugin de-initialized")
     end
 
     ---------------------------------------------------------------------------
