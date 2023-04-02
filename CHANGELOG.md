@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.04
+
 ## 0.03
 
 * Bugfix: Merge `iidxio-exit-hook` plugin with `iidxio` plugin because of plugin crashing after
