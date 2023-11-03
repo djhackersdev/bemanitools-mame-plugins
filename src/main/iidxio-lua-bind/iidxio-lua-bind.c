@@ -3,8 +3,8 @@
 
 #include "bemanitools/iidxio.h"
 
-#include "lua-5.3.6/lua.h"
-#include "lua-5.3.6/lauxlib.h"
+#include "lua-5.4.0/lua.h"
+#include "lua-5.4.0/lauxlib.h"
 
 #include "util/log.h"
 #include "util/thread.h"
