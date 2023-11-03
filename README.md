@@ -1,25 +1,39 @@
-# iidxio MAME plugin
+# Bemanitools IO MAME plugins
 
 Version: `0.04`
 
-A MAME Lua plugin to hook up all game IO by the
-[twinkle system](https://github.com/mamedev/mame/blob/master/src/mame/konami/twinkle.cpp) to
-[Bemanitools'](https://github.com/djhackersdev/bemanitools)
-[iidxio API](https://github.com/djhackersdev/bemanitools/blob/master/doc/api.md).
+MAME Lua plugins to hook up (real hardware) IO using the following interfaces supported by
+[Bemanitools](https://github.com/djhackersdev/bemanitools):
 
-This allows you to use any custom or real IO hardware implementing the iidxio API with any
-Beatmania IIDX game supported by MAME. 
+* Beatmania IIDX,
+  [twinkle system](https://github.com/mamedev/mame/blob/master/src/mame/konami/twinkle.cpp) to
+  [iidxio API](https://github.com/djhackersdev/bemanitools/blob/master/doc/api.md)
+* Dance Dance Revolution,
+  [system 573 digital system](https://github.com/mamedev/mame/blob/master/src/mame/konami/ksys573.cpp)
+  to [ddrio API](https://github.com/djhackersdev/bemanitools/blob/master/doc/api.md)
 
-## Remarks
+This allows you to use any custom or real IO hardware implementing the Bemanitools supported APIs
+and use them on the games and their versions supported by MAME.
 
+## Remarks and (current) limitations
+
+* When setting up MAME for any of the Bemani games, do read and follow
+  [987123879113's wiki](https://github.com/987123879113/mame/wiki). It contains very relevant and
+  important information and setup instructions to setup the games properly and get optimal
+  performance regarding smooth framerate and accurate game play timing.
 * Tested and verified working with
-  * Official [MAME 0.251](https://github.com/mamedev/mame/releases/tag/mame0251)
+  * Official [MAME 0.259](https://github.com/mamedev/mame/releases/tag/mame0259)
   * 987123879113's 
-    [Bemani branch](https://github.com/987123879113/mame/commit/9b651b0e5bd269ac5bcb4e63b73990b692aa6cdb) of his MAME fork
-* `iidxio_lua_bind.dll` uses
-  [Lua 5.3.6](https://sourceforge.net/projects/luabinaries/files/5.3.6/Windows%20Libraries/Dynamic/lua-5.3.6_Win64_dllw6_lib.zip/download) (included in this repository and the binary distribution
-  zip) which must match the same major + minor Lua version your target MAME version is using. You
-  can check the Lua version used by MAME by running the Lua REPL of MAME, i.e. `mame.exe -console`.
+    [Bemani branch](https://github.com/987123879113/mame/commit/200dc5396e06e74536546cad5ebdddbb9c41a0f4) of his MAME
+    fork
+* The lua bind libraries, i.e. `ddrio_lua_bind.dll` and `iidxio_lua_bind.dll`, use
+  [Lua 5.4.0](https://sourceforge.net/projects/luabinaries/files/5.4.0/Windows%20Libraries/Dynamic/lua-5.4.0_Win64_dllw6_lib.zip/download) (included in this repository and the binary distribution zip) which must match the same
+  major + minor Lua version your target MAME version is using. This is not an issue with the
+  versions mentioned above.
+  * Using a different MAME version, you can check the Lua version used by MAME by running the Lua
+    REPL of MAME, i.e. `mame.exe -console`.
+  * The lua version must match exactly to ensure ABI compatibility. Otherwise, stuff will crash in
+    very odd ways and likely without proper error/debug output
 * The `iidxio` Lua plugin does not merge analog inputs. Any configured analog inputs, e.g.
   turntables, from MAME's input manager will not work. Digital inputs, e.g. 14 key buttons, however
   are merged and should work.
@@ -30,8 +44,8 @@ Beatmania IIDX game supported by MAME.
 
 ### Local
 
-Tested and working on Linux and Mac. Install the following tools with your favorite package
-manager or `brew` on Mac:
+Tested and working on Linux and MacOSX. Install the following tools with your favorite package
+manager or `brew` on MacOSX:
 
 * (gnu)make
 * `x86_64-w64-mingw32-*` tools
@@ -43,7 +57,8 @@ To build the project:
 make
 ```
 
-The distribution zip-file `iidxio-mame-plugin.zip` is located under the `build` sub-directory.
+The distribution zip-files `iidxio-mame-plugin.zip` and `ddrio-mame-plugin.zip` are located in
+the `build` sub-directory.
 
 ### Docker
 
@@ -53,10 +68,15 @@ Naturally, docker required. Any dependencies installed in container. To run the 
 make build-docker
 ```
 
-The distribution zip-file `iidxio-mame-plugin.zip` is located under the `build/docker`
-sub-directory.
+The distribution zip-files `iidxio-mame-plugin.zip` and `ddrio-mame-plugin.zip` are located in the
+`build/docker` sub-directory.
 
-## Deployment and using with MAME
+## Deployment to MAME
+
+The following explains how to deploy the iidxio distribution package to MAME. To deploy the ddrio
+plugin, follow the same steps just with the other distribution package.
+
+### Deployment process with iidxio
 
 Unpack the contents of `iidxio-mame-plugin.zip` to your `mame` installation folder. This merges
 the `plugin` folder and `iidxio_lua_bind.dll` should be co-located next to `mame.exe`.
@@ -81,15 +101,44 @@ command line by those libraries if they got picked up correctly and the plugin w
 ### Example: iidxio-bio2
 
 The
-[BIO2 implementation of iidxio](https://github.com/djhackersdev/bemanitools/blob/master/doc/iidxhook/iidxio-bio2.md) requires the following files co-located in the same directory as
-`iidxio_lua_bind.dll`:
+[BIO2 implementation of iidxio](https://github.com/djhackersdev/bemanitools/blob/master/doc/iidxhook/iidxio-bio2.md)
+requires the following files co-located in the same directory as `iidxio_lua_bind.dll`:
 
 * `iidxio-bio2.dll`: Renamed to `iidxio.dll`
-* `iidxio-bio2.conf`
+* `iidxio-bio2.conf`: Auto generated on first start if it doesn't exist
 * `aciomgr.dll`
 
 Source these files from your bemanitools binary distribution accordingly. Ensure to pick the 64-bit
 versions.
+
+### Example: ddrio-p3io
+
+Use `ddrio-p3io.dll` in combination with `ddrio-async.dll` to improve performance as synchronous IO
+calls of *ddrio-p3io* are highly IO bound, latency ~16 ms for one update cycle.
+
+This introduces choppy framerate and bad input responsiveness to MAME.
+
+The
+[P3IO implementation of ddrio](https://github.com/djhackersdev/bemanitools/blob/master/doc/ddrhook/ddrio-p3io.md)
+requires the following files co-located in the same directory as `ddrio_lua_bind.dll`:
+
+* [`ddrio-async.dll`](https://github.com/djhackersdev/bemanitools/blob/master/doc/ddrhook/ddrio-async.md): Renamed to
+  `ddrio.dll`
+* `ddrio-p3io.dll`: Renamed to `ddrio-async-child.dll`
+* `ddrio-p3io.conf`: Auto generated on first start if it doesn't exist
+
+Source these files from your bemanitools binary distribution accordingly. Ensure to pick the 64-bit
+versions.
+
+#### Technical background
+
+Combining *ddrio-async* with *ddrio-p3io*, the combined backend is able to drive inputs/outputs at a
+rate of ~250hz = ~4 updates per frame. This results in an average input latency of ~4 ms which is as
+good as it can get with the p3io hardware's performance limitations that I measured (see the 4 ms
+for the IOCTL mentioned above).
+
+This is more than good enough as as update frequency of the 573 hardware was slightly less than that
+(I got told something ~180 hz?).
 
 ### Example: iidxio default implementation
 
@@ -107,6 +156,54 @@ The following files co-located in the same directory as `iidxio_lua_bind.dll`:
 
 Source these files from your bemanitools binary distribution accordingly. Ensure to pick the 64-bit
 versions.
+
+## Debugging
+
+* [MAME's command line documentation](https://docs.mamedev.org/commandline/commandline-all.html) as
+  reference here
+
+```bat
+.\mame.exe -console -verbose -window -oslog -log -resolution 1024x768 ddr4mp
+```
+
+* Check if your mame setup boots to the game without the plugin activated/installed
+* `-console` is a lua console/repl plugin included in MAME. Useful for poking around and getting
+  more debug output about the lua environment
+* `-verbose`: Enable verbose output, probably the most essential one
+* Window + resolution option: To be able to see the command line output next to MAME running
+* `-oslog` and `-log`: Enables error logging to the terminal
+* Hotkeys F10/F11 to speed up emulation, e.g. faster installs and boot process for quicker test
+  iterations
+
+## Maintenance
+
+### Managing and upgrading the lua version
+
+The lua version used here needs to be compatible (read: identical) to whatever version your target
+MAME version is using. Check the lua version on MAME by running MAME from the command line with the
+argument `-console`. It starts the console plugin and prints the lua version somewhere at the top
+of the output.
+
+For upgrades/downgrades, grab the right version from
+[here](https://sourceforge.net/projects/luabinaries/files/).
+
+Replace the includes in `src/imports` as well as the `.dll`` file in `dist` accordingly.
+
+You also need to re-generate the `.def` symbol file in `src/imports`. Run the following command
+and replace parameters accordingly:
+
+```shell
+x86_64-w64-mingw32-dlltool -z out.def --export-all-symbols dist/lua54.dll
+```
+
+Cleanup the `out.def` file by removing all symbols except for the ones starting with `lua` and add
+`LIBRARY lua54` at the top (replace the number according to the version of lua you use).
+
+Update `Module.mk` if the version changed that it requires pointing to different files,
+e.g. `lua54.dll`.
+
+Update the lua binding libraries `ddrio-lua-bind.def` and `iidxio-lua-bind.def` to link to the
+new/different lua version if required.
 
 ## High level technical information
 
