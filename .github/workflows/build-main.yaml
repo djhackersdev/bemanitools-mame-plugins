@@ -3,7 +3,7 @@ name: "Build bemanitools-mame-plugins"
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
