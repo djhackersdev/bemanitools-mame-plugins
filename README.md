@@ -1,9 +1,11 @@
-# Bemanitools IO MAME plugins
+# Bemanitools MAME plugins
 
 Version: `0.04`
 
-MAME Lua plugins to hook up (real hardware) IO using the following interfaces supported by
-[Bemanitools](https://github.com/djhackersdev/bemanitools):
+MAME Lua plugins to hook up implementations of supported [Bemanitools](https://github.com/djhackersdev/bemanitools)
+APIs, e.g. IO hardware in actual arcade cabinets or custom IO hardware.
+
+Currently supported:
 
 * Beatmania IIDX,
   [twinkle system](https://github.com/mamedev/mame/blob/master/src/mame/konami/twinkle.cpp) to
@@ -11,9 +13,6 @@ MAME Lua plugins to hook up (real hardware) IO using the following interfaces su
 * Dance Dance Revolution,
   [system 573 digital system](https://github.com/mamedev/mame/blob/master/src/mame/konami/ksys573.cpp)
   to [ddrio API](https://github.com/djhackersdev/bemanitools/blob/master/doc/api.md)
-
-This allows you to use any custom or real IO hardware implementing the Bemanitools supported APIs
-and use them on the games and their versions supported by MAME.
 
 ## Remarks and (current) limitations
 
