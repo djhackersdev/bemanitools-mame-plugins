@@ -1,0 +1,10 @@
+{
+	"plugin": {
+		"name": "ddrio",
+		"description": "Plugin to integrate the Bemanitools 5 ddrio API for IO handling into the ksys573 system",
+		"version": "0.0.1",
+		"author": "icex2",
+		"type": "plugin",
+		"start": "true"
+	}
+}

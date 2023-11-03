@@ -1,0 +1,4 @@
+LIBRARY ddrio-lua-bind
+
+EXPORTS
+    luaopen_ddrio_lua_bind

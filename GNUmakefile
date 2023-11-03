@@ -187,7 +187,7 @@ endef
 
 ##############################################################################
 
-$(eval $(foreach bitness,32 64,$(call t_bitness,$(bitness))))
+$(eval $(foreach bitness,64,$(call t_bitness,$(bitness))))
 
 #
 # Pull in GCC-generated dependency files

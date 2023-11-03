@@ -5,6 +5,7 @@ cflags          += \
 	-DCOBJMACROS \
 	-Wno-attributes \
 
+include src/main/ddrio-lua-bind/Module.mk
 include src/main/iidxio-lua-bind/Module.mk
 include src/main/util/Module.mk
 
@@ -12,33 +13,76 @@ include src/main/util/Module.mk
 # Distribution build rules
 #
 
-$(BUILDDIR)/mame:
+#
+# Beatmania IIDX
+#
+
+$(BUILDDIR)/mame-iidx:
 	$(V)mkdir -p $@
 
-$(BUILDDIR)/mame/iidxio_lua_bind.dll: \
-		$(BUILDDIR)/mame \
+$(BUILDDIR)/mame-iidx/iidxio_lua_bind.dll: \
+		$(BUILDDIR)/mame-iidx \
 		$(BUILDDIR)/bin/indep-64/iidxio-lua-bind.dll
-	$(V)cp $(BUILDDIR)/bin/indep-64/iidxio-lua-bind.dll $(BUILDDIR)/mame/iidxio_lua_bind.dll
+	$(V)cp $(BUILDDIR)/bin/indep-64/iidxio-lua-bind.dll $(BUILDDIR)/mame-iidx/iidxio_lua_bind.dll
 
-$(BUILDDIR)/mame/lua53.dll: \
-		$(BUILDDIR)/mame \
-		dist/lua53.dll
-	$(V)cp dist/lua53.dll $(BUILDDIR)/mame/lua53.dll
+$(BUILDDIR)/mame-iidx/lua54.dll: \
+		$(BUILDDIR)/mame-iidx \
+		dist/lua54.dll
+	$(V)cp dist/lua54.dll $(BUILDDIR)/mame-iidx/lua54.dll
 
-$(BUILDDIR)/mame/plugins/iidxio/init.lua:
+$(BUILDDIR)/mame-iidx/plugins/iidxio/init.lua:
 	$(V)mkdir -p $(shell dirname $@)
 	$(V)cp src/mame/plugins/iidxio/init.lua $@
 
-$(BUILDDIR)/mame/plugins/iidxio/plugin.json:
+$(BUILDDIR)/mame-iidx/plugins/iidxio/plugin.json:
 	$(V)mkdir -p $(shell dirname $@)
 	$(V)cp src/mame/plugins/iidxio/plugin.json $@
 
 $(BUILDDIR)/iidxio-mame-plugin.zip: \
-		$(BUILDDIR)/mame/lua53.dll \
-		$(BUILDDIR)/mame/iidxio_lua_bind.dll \
-		$(BUILDDIR)/mame/plugins/iidxio/init.lua \
-		$(BUILDDIR)/mame/plugins/iidxio/plugin.json
+		$(BUILDDIR)/mame-iidx/lua54.dll \
+		$(BUILDDIR)/mame-iidx/iidxio_lua_bind.dll \
+		$(BUILDDIR)/mame-iidx/plugins/iidxio/init.lua \
+		$(BUILDDIR)/mame-iidx/plugins/iidxio/plugin.json
 	$(V)echo ... $@
-	$(V)cd $(BUILDDIR)/mame && zip -r ../../$@ *
+	$(V)cd $(BUILDDIR)/mame-iidx && zip -r ../../$@ *
 
-all: $(BUILDDIR)/iidxio-mame-plugin.zip
+#
+# Dance Dance Revolution
+#
+
+$(BUILDDIR)/mame-ddr:
+	$(V)mkdir -p $@
+
+$(BUILDDIR)/mame-ddr/ddrio_lua_bind.dll: \
+		$(BUILDDIR)/mame-ddr \
+		$(BUILDDIR)/bin/indep-64/ddrio-lua-bind.dll
+	$(V)cp $(BUILDDIR)/bin/indep-64/ddrio-lua-bind.dll $(BUILDDIR)/mame-ddr/ddrio_lua_bind.dll
+
+$(BUILDDIR)/mame-ddr/lua54.dll: \
+		$(BUILDDIR)/mame-ddr \
+		dist/lua54.dll
+	$(V)cp dist/lua54.dll $(BUILDDIR)/mame-ddr/lua54.dll
+
+$(BUILDDIR)/mame-ddr/plugins/ddrio/init.lua:
+	$(V)mkdir -p $(shell dirname $@)
+	$(V)cp src/mame/plugins/ddrio/init.lua $@
+
+$(BUILDDIR)/mame-ddr/plugins/ddrio/plugin.json:
+	$(V)mkdir -p $(shell dirname $@)
+	$(V)cp src/mame/plugins/ddrio/plugin.json $@
+
+$(BUILDDIR)/ddrio-mame-plugin.zip: \
+		$(BUILDDIR)/mame-ddr/lua54.dll \
+		$(BUILDDIR)/mame-ddr/ddrio_lua_bind.dll \
+		$(BUILDDIR)/mame-ddr/plugins/ddrio/init.lua \
+		$(BUILDDIR)/mame-ddr/plugins/ddrio/plugin.json
+	$(V)echo ... $@
+	$(V)cd $(BUILDDIR)/mame-ddr && zip -r ../../$@ *
+
+#
+# Final packages
+#
+
+all: \
+	$(BUILDDIR)/iidxio-mame-plugin.zip \
+	$(BUILDDIR)/ddrio-mame-plugin.zip
