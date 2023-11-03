@@ -2,6 +2,8 @@
 
 Version: `0.05`
 
+[Changelog](CHANGELOG.md)
+
 MAME Lua plugins to hook up implementations of supported [Bemanitools](https://github.com/djhackersdev/bemanitools)
 APIs, e.g. IO hardware in actual arcade cabinets or custom IO hardware.
 
