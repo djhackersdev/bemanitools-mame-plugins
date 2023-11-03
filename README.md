@@ -354,3 +354,8 @@ frame_update
 ## Release process
 
 Please refer to the [dedicated documentation](doc/release-process.md).
+
+## License
+
+Source code license is the Unlicense; you are permitted to do with this as thou wilt. For details,
+please refer to the [LICENSE file](LICENSE) included with the source code.
