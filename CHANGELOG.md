@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.05
+
+### Features
+
+### Fixes
+
+### Misc
+
 ## 0.04
 
 ### Features
@@ -13,9 +21,6 @@
 N/A
 
 ### Misc
-
-
-## 0.03
 
 N/A
 

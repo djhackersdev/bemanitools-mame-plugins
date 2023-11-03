@@ -1,6 +1,6 @@
 # Bemanitools MAME plugins
 
-Version: `0.04`
+Version: `0.05`
 
 MAME Lua plugins to hook up implementations of supported [Bemanitools](https://github.com/djhackersdev/bemanitools)
 APIs, e.g. IO hardware in actual arcade cabinets or custom IO hardware.
