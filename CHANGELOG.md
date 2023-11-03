@@ -2,8 +2,6 @@
 
 ## 0.04
 
-## 0.03
-
 ### Features
 
 * Add plugin to support the ddrio Bemanitools API on System 573 digital games. No support for
@@ -12,15 +10,22 @@
 
 ### Fixes
 
-* Enforce loading order by changing `iidx-exit-hook` plugin name to `iidxio-exit-hook`.
-  When using `iidxio` and `iidxio-exit-hook` in combination, `iidxio` **must load before**
-  `iidxio-exit-hook` for the latter to work.
-* Merge `iidxio-exit-hook` functionality into `iidxio` plugin due to currently unresolved issues
-  with multiple memory read/write hooks in lua plugin environment
-* MAME (soft) machine reset re-triggering init function in Lua plugin scripts of `iidxio`
-  and `iidxio-exit-hook`. Detect and block re-init
+N/A
 
 ### Misc
+
+
+## 0.03
+
+N/A
+
+## 0.03
+
+* Bugfix: Merge `iidxio-exit-hook` plugin with `iidxio` plugin because of plugin crashing after
+  about 2-3 minutes running the game. Running two plugins writing/reading the same memory regions
+  seems to be buggy for now.
+* Bugfix: MAME (soft) machine reset re-triggering init function in Lua plugin scripts of `iidxio`
+  and `iidxio-exit-hook`. Detect and block re-init
 
 ## 0.02
 
