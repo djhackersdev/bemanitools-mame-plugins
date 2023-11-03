@@ -11,8 +11,8 @@ BUILDDIR        ?= build
 
 builddir_docker 	  := $(BUILDDIR)/docker
 
-docker_container_name := "iidx-mame-plugin-build"
-docker_image_name     := "iidx-mame-plugin:build"
+docker_container_name := "bemanitools-mame-plugins-build"
+docker_image_name     := "bemanitools-mame-plugins:build"
 
 depdir                := $(BUILDDIR)/dep
 objdir                := $(BUILDDIR)/obj
@@ -65,13 +65,21 @@ version:
 
 build-docker:
 	$(V)docker rm -f $(docker_container_name) 2> /dev/null || true
-	$(V)docker build -t $(docker_image_name) -f Dockerfile .
-	$(V)docker create --name $(docker_container_name) $(docker_image_name)
-	$(V)rm -rf $(builddir_docker)
-	$(V)mkdir -p $(builddir_docker)
-	$(V)docker cp $(docker_container_name):/iidxio-mame-plugin/build $(builddir_docker)
-	$(V)mv $(builddir_docker)/build/* $(builddir_docker)
-	$(V)rm -r $(builddir_docker)/build
+	$(V)docker \
+		build \
+		-t $(docker_image_name) \
+		-f Dockerfile \
+		.
+	$(V)docker \
+		run \
+		--volume $(shell pwd):/bemanitools-mame-plugins \
+		--name $(docker_container_name) \
+		$(docker_image_name)
+
+clean-docker:
+	$(V)docker rm -f $(docker_container_name) || true
+	$(V)docker image rm -f $(docker_image_name) || true
+	$(V)rm -rf $(BUILD_DIR)
 
 #
 # Pull in module definitions
