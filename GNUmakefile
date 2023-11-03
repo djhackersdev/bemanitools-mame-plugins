@@ -20,6 +20,7 @@ bindir                := $(BUILDDIR)/bin
 
 toolchain_64          := x86_64-w64-mingw32-
 
+gitrev                := $(shell git rev-parse HEAD)
 cppflags              := -I src -I src/main -I src/imports
 cflags                := -O2 -pipe -ffunction-sections -fdata-sections \
                           -Wall -std=c99 -DPSAPI_VERSION=1
@@ -33,18 +34,34 @@ ldflags		          := -Wl,--gc-sections -static-libgcc
 
 all: build
 
+FORCE:
+
 .PHONY: \
 build-docker \
 clean \
-release
+release \
+print-building \
+version \
+FORCE
 
 release: \
 clean \
 all
 
+build: \
+print-building \
+version
+
+print-building:
+	$(V)echo "Build gitrev "$(gitrev)"..."
+
 clean:
 	$(V)echo "Cleaning up..."
 	$(V)rm -rf $(BUILDDIR)
+
+# Generate a version file to identify the build
+version:
+	$(V)echo "$(gitrev)" > version
 
 build-docker:
 	$(V)docker rm -f $(docker_container_name) 2> /dev/null || true
@@ -55,8 +72,6 @@ build-docker:
 	$(V)docker cp $(docker_container_name):/iidxio-mame-plugin/build $(builddir_docker)
 	$(V)mv $(builddir_docker)/build/* $(builddir_docker)
 	$(V)rm -r $(builddir_docker)/build
-
-build:
 
 #
 # Pull in module definitions

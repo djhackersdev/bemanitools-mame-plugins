@@ -83,6 +83,14 @@ $(BUILDDIR)/ddrio-mame-plugin.zip: \
 # Final packages
 #
 
-all: \
-	$(BUILDDIR)/iidxio-mame-plugin.zip \
-	$(BUILDDIR)/ddrio-mame-plugin.zip
+$(BUILDDIR)/bemanitools-mame-plugins.zip: \
+		$(BUILDDIR)/iidxio-mame-plugin.zip \
+		$(BUILDDIR)/ddrio-mame-plugin.zip \
+		CHANGELOG.md \
+		LICENSE \
+		README.md \
+		version
+	$(V)echo ... $@
+	$(V)zip -j $@ $^
+
+all: $(BUILDDIR)/bemanitools-mame-plugins.zip
