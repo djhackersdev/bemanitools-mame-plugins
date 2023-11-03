@@ -350,3 +350,7 @@ frame_update
 * Very similar to main menu
 * Two additional 14 key input polls per frame, total of 4 per frame
 * One additional 14 key output write per frame, total of 2 per frame
+
+## Release process
+
+Please refer to the [dedicated documentation](doc/release-process.md).
