@@ -1,9 +1,9 @@
 dlls        += iidxio-lua-bind
-imps		+= iidxio lua53
+imps		+= iidxio lua54
 
 deplibs_iidxio-lua-bind  := \
     iidxio \
-    lua53 \
+    lua54 \
 
 ldflags_iidxio-lua-bind      := \
 
